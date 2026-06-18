@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="frost">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U.N.M Server — Minecraft Kingdoms</title>
+<meta name="description" content="U.N.M Server is a player-built Minecraft kingdoms server. Explore the realms, gather your essentials, and claim your throne.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   AETHERFALL — Frost Glassmorphism Theme System
+   ============================================================ */
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img, svg { display: block; max-width: 100%; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+/* ---------- Shared tokens ---------- */
+:root{
+  --font-display: "Cinzel", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --radius-sm: 9px;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.75rem;
+  --space-4: 2.75rem;
+  --space-5: 4.5rem;
+
+  --blur-strong: blur(22px) saturate(150%);
+  --blur-soft: blur(14px) saturate(130%);
+
+  --shadow-card: 0 14px 40px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Theme: FROST (default) ---------- */
+[data-theme="frost"]{
+  --bg-0: #060d16;
+  --bg-1: #0d2335;
+  --aurora-a: #5fe0c4;
+  --aurora-b: #4f8ff0;
+  --aurora-c: #8fd9ff;
+  --glass-fill: rgba(184, 222, 240, 0.07);
+  --glass-fill-strong: rgba(184, 222, 240, 0.13);
+  --glass-border: rgba(204, 236, 250, 0.18);
+  --text-0: #eef6fb;
+  --text-1: #9fc1d2;
+  --accent: #6fe9d2;
+  --accent-strong: #2fb6e0;
+  --accent-contrast: #04141c;
+}
+
+/* ---------- Theme: AURORA ---------- */
+[data-theme="aurora"]{
+  --bg-0: #0c0820;
+  --bg-1: #1d1140;
+  --aurora-a: #b388ff;
+  --aurora-b: #5fe0c4;
+  --aurora-c: #ff8fd0;
+  --glass-fill: rgba(212, 192, 250, 0.07);
+  --glass-fill-strong: rgba(212, 192, 250, 0.13);
+  --glass-border: rgba(224, 204, 255, 0.2);
+  --text-0: #f4eefc;
+  --text-1: #b8a9d8;
+  --accent: #cda6ff;
+  --accent-strong: #9b6bff;
+  --accent-contrast: #100726;
+}
+
+/* ---------- Theme: EMBER ---------- */
+[data-theme="ember"]{
+  --bg-0: #170d08;
+  --bg-1: #321608;
+  --aurora-a: #ff8a3d;
+  --aurora-b: #ff4d4d;
+  --aurora-c: #4fb0e0;
+  --glass-fill: rgba(255, 202, 160, 0.07);
+  --glass-fill-strong: rgba(255, 202, 160, 0.13);
+  --glass-border: rgba(255, 212, 180, 0.2);
+  --text-0: #fdf1e8;
+  --text-1: #d8ad8c;
+  --accent: #ffae6b;
+  --accent-strong: #ff7a3d;
+  --accent-contrast: #1a0c04;
+}
+
+/* ---------- Theme: MIDNIGHT ---------- */
+[data-theme="midnight"]{
+  --bg-0: #04050a;
+  --bg-1: #0b0d18;
+  --aurora-a: #8b7cf0;
+  --aurora-b: #3f7d72;
+  --aurora-c: #5566aa;
+  --glass-fill: rgba(182, 182, 222, 0.05);
+  --glass-fill-strong: rgba(182, 182, 222, 0.1);
+  --glass-border: rgba(202, 202, 232, 0.14);
+  --text-0: #e9e9f3;
+  --text-1: #8e8ea8;
+  --accent: #a79bf5;
+  --accent-strong: #6a5acd;
+  --accent-contrast: #0a0a14;
+}
+
+/* ---------- Body & ambient background ---------- */
+body{
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--text-0);
+  background: radial-gradient(ellipse 120% 80% at 50% -10%, var(--bg-1), var(--bg-0) 60%);
+  overflow-x: hidden;
+  transition: background 0.6s var(--ease);
+}
+
+.aurora-field{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora-field span{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+.aurora-field .b1{
+  width: 50vmax; height: 50vmax;
+  top: -15%; left: -10%;
+  background: var(--aurora-a);
+  animation: driftA 38s var(--ease) infinite alternate;
+}
+.aurora-field .b2{
+  width: 42vmax; height: 42vmax;
+  bottom: -18%; right: -8%;
+  background: var(--aurora-b);
+  animation: driftB 46s var(--ease) infinite alternate;
+}
+.aurora-field .b3{
+  width: 34vmax; height: 34vmax;
+  top: 30%; left: 55%;
+  background: var(--aurora-c);
+  opacity: 0.35;
+  animation: driftC 54s var(--ease) infinite alternate;
+}
+@keyframes driftA{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(8vw, 6vh) scale(1.15); } }
+@keyframes driftB{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(-7vw, -5vh) scale(0.9); } }
+@keyframes driftC{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(-5vw, 8vh) scale(1.2); } }
+
+/* ---------- Glass utility ---------- */
+.glass{
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur-soft);
+  -webkit-backdrop-filter: var(--blur-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Layout shell ---------- */
+.page{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--space-3) var(--space-5);
+}
+
+/* ---------- Top navigation ---------- */
+.topnav{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin: var(--space-2) var(--space-3) var(--space-4);
+  background: var(--glass-fill-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: background 0.6s var(--ease), border-color 0.6s var(--ease);
+}
+
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  white-space: nowrap;
+}
+.crest{ width: 34px; height: 34px; flex-shrink: 0; }
+.crest .crest-ring{ fill: none; stroke: var(--glass-border); stroke-width: 1.4; }
+.crest .crest-accent{ fill: var(--accent); }
+.crest .crest-line{ stroke: var(--text-0); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+
+.brand-name{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-links{
+  display: flex;
+  gap: 0.35rem;
+  background: rgba(0,0,0,0.16);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  padding: 0.3rem;
+}
+.nav-link{
+  padding: 0.5rem 1.05rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-1);
+  transition: color 0.3s var(--ease), background 0.3s var(--ease);
+}
+.nav-link:hover{ color: var(--text-0); }
+.nav-link.active{
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.nav-aside{
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.theme-switch{ display: flex; gap: 0.45rem; }
+.theme-dot{
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.25);
+  position: relative;
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.theme-dot:hover{ transform: translateY(-2px); }
+.theme-dot.active{ border-color: var(--text-0); }
+.theme-dot.active::after{
+  content: "";
+  position: absolute; inset: -5px;
+  border: 1px solid var(--text-0);
+  border-radius: 50%;
+  opacity: 0.55;
+}
+.theme-dot[data-theme-btn="frost"]{ background: linear-gradient(135deg, #5fe0c4, #4f8ff0); }
+.theme-dot[data-theme-btn="aurora"]{ background: linear-gradient(135deg, #b388ff, #ff8fd0); }
+.theme-dot[data-theme-btn="ember"]{ background: linear-gradient(135deg, #ff8a3d, #ff4d4d); }
+.theme-dot[data-theme-btn="midnight"]{ background: linear-gradient(135deg, #8b7cf0, #3f7d72); }
+
+.nav-toggle{
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  align-items: center;
+  justify-content: center;
+}
+.nav-toggle svg{ width: 18px; height: 18px; }
+.nav-toggle .ti{ stroke: var(--text-0); stroke-width: 2; stroke-linecap: round; }
+
+/* ---------- Section visibility & entrance ---------- */
+.section{ display: none; }
+.section.active{
+  display: block;
+  animation: rise 0.5s var(--ease) both;
+}
+@keyframes rise{
+  from{ opacity: 0; transform: translateY(14px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.eyebrow{
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.section-head{ margin-bottom: var(--space-4); max-width: 640px; }
+.section-head h2{
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0.5rem 0 0.75rem;
+  font-weight: 600;
+}
+.section-head p{ color: var(--text-1); line-height: 1.7; margin: 0; }
+
+/* ---------- Home ---------- */
+.hero{
+  padding: var(--space-5) var(--space-4);
+  margin-bottom: var(--space-4);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,255,255,0.07), transparent 60%);
+  pointer-events: none;
+}
+.hero-eyebrow{
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-1);
+}
+.hero h1{
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 4.4rem);
+  letter-spacing: 0.04em;
+  margin: 0.5rem 0 0.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-0), var(--accent) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-tagline{
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-1);
+  max-width: 620px;
+  margin: 0 auto var(--space-3);
+  line-height: 1.7;
+}
+
+.welcome{
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.welcome h3{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin: 0 0 0.9rem;
+}
+.welcome p{ color: var(--text-1); line-height: 1.8; margin: 0 0 1rem; }
+.welcome p:last-child{ margin-bottom: 0; }
+
+.connect-card{
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-self: start;
+}
+.connect-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.6rem;
+}
+.connect-row:last-child{ border-bottom: none; padding-bottom: 0; }
+.connect-label{ font-size: 0.78rem; color: var(--text-1); letter-spacing: 0.06em; text-transform: uppercase; }
+.connect-value{ font-weight: 700; font-family: var(--font-body); }
+
+/* Updated feature grid to accommodate 4 features */
+.feature-strip{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+.feature{
+  padding: var(--space-3);
+  text-align: left;
+}
+.feature .ficon{ width: 30px; height: 30px; margin-bottom: 0.9rem; }
+.feature .ficon .fi{ stroke: var(--accent); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.feature h4{ margin: 0 0 0.4rem; font-size: 1.02rem; }
+.feature p{ margin: 0; color: var(--text-1); font-size: 0.92rem; line-height: 1.6; }
+
+/* ---------- Kingdoms ---------- */
+.kingdom-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+.kingdom-card{
+  padding: var(--space-3);
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+.kingdom-meta{
+  display: flex;
+  gap: 1.1rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+.kingdom-meta span{
+  font-size: 0.76rem;
+  color: var(--text-1);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.kingdom-meta span strong{ color: var(--accent); font-weight: 700; }
+.kingdom-card h3{
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem;
+}
+.kingdom-sigil{ font-size: 0.9rem; color: var(--text-1); margin: 0 0 0.9rem; font-style: italic; }
+.kingdom-card p{ color: var(--text-1); line-height: 1.75; margin: 0; }
+
+.kingdom-gallery{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+.img-slot{
+  aspect-ratio: 4 / 3;
+  border: 1.5px dashed var(--glass-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(0,0,0,0.14);
+  color: var(--text-1);
+  text-align: center;
+  padding: 0.5rem;
+}
+.img-slot svg{ width: 26px; height: 26px; opacity: 0.7; }
+.img-slot .pi{ stroke: var(--text-1); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.img-slot span{ font-size: 0.7rem; letter-spacing: 0.03em; line-height: 1.4; }
+
+/* ---------- Essentials ---------- */
+.essentials-layout{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+.contents-card{ padding: var(--space-3); }
+.contents-card h3{
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+.contents-list li{
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-1);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+.contents-list li:last-child{ border-bottom: none; }
+.contents-list svg{ width: 17px; height: 17px; margin-top: 0.15rem; flex-shrink: 0; }
+.contents-list .ci{ stroke: var(--accent); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.download-card{
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.file-row{
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--glass-border);
+}
+.file-icon{
+  width: 46px; height: 46px;
+  border-radius: var(--radius-sm);
+  background: var(--glass-fill-strong);
+  border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.file-icon svg{ width: 22px; height: 22px; }
+.file-icon .fii{ stroke: var(--accent); stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.file-name{ font-weight: 700; font-size: 1rem; word-break: break-all; }
+.file-sub{ color: var(--text-1); font-size: 0.85rem; margin-top: 0.15rem; }
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  width: 100%;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.btn:active{ transform: scale(0.98); }
+.btn-primary{
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: var(--accent-contrast);
+  box-shadow: 0 10px 30px -8px var(--accent-strong);
+}
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 36px -8px var(--accent-strong); }
+.btn-primary svg{ width: 19px; height: 19px; }
+.btn-primary .bi{ stroke: var(--accent-contrast); stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+.download-note{ font-size: 0.82rem; color: var(--text-1); text-align: center; line-height: 1.6; margin: 0; }
+
+/* ---------- Oblivian Regnum — forbidden state ---------- */
+.kingdom-card--forbidden{
+  border-color: rgba(180, 48, 48, 0.40);
+  background: rgba(160, 30, 30, 0.07);
+}
+.kingdom-card--forbidden h3{ color: #e07070; }
+.kingdom-card--forbidden .kingdom-meta span strong{ color: #e07070; }
+.focus--forbidden{ color: #c05050 !important; }
+.kingdom-sigil--forbidden{ color: #b06060 !important; }
+.kingdom-card--forbidden p{ color: var(--text-1); font-style: italic; }
+.img-slot--forbidden{ border-color: rgba(180, 48, 48, 0.35) !important; background: rgba(120, 20, 20, 0.22) !important; }
+.img-slot--forbidden span{ color: #c06060 !important; }
+.pf{ stroke: #c05050; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Footer ---------- */
+.site-footer{
+  text-align: center;
+  padding: var(--space-3) var(--space-3) var(--space-4);
+  color: var(--text-1);
+  font-size: 0.85rem;
+}
+.site-footer span{ color: var(--accent); }
+
+/* ---------- Toast ---------- */
+.toast{
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 16px);
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  background: var(--glass-fill-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong);
+  box-shadow: var(--shadow-card);
+  font-size: 0.88rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+  z-index: 100;
+}
+.toast.show{ opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Focus accessibility ---------- */
+a:focus-visible, button:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px){
+  .welcome{ grid-template-columns: 1fr; }
+  .feature-strip{ grid-template-columns: 1fr; }
+  .kingdom-card{ grid-template-columns: 1fr; }
+  .essentials-layout{ grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px){
+  .topnav{ flex-wrap: wrap; }
+  .nav-links{
+    order: 3;
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-top: 0.6rem;
+  }
+  .nav-links.open{ display: flex; }
+  .nav-link{ text-align: center; }
+  .nav-toggle{ display: flex; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  .aurora-field span{ animation: none; }
+  .section.active{ animation: none; }
+  .btn-primary:hover{ transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="aurora-field" aria-hidden="true">
+  <span class="b1"></span>
+  <span class="b2"></span>
+  <span class="b3"></span>
+</div>
+
+<header class="topnav">
+  <div class="brand">
+    <svg class="crest" viewBox="0 0 40 40" aria-hidden="true">
+      <polygon class="crest-ring" points="20,2 35,11 35,29 20,38 5,29 5,11"></polygon>
+      <path class="crest-line" d="M11 26 L20 12 L29 26"></path>
+      <circle class="crest-accent" cx="20" cy="20" r="2.4"></circle>
+    </svg>
+    <span class="brand-name">U.N.M</span>
+  </div>
+
+  <nav class="nav-links" id="navLinks" aria-label="Primary">
+    <button class="nav-link active" data-target="home" aria-current="page">Home</button>
+    <button class="nav-link" data-target="kingdoms">Kingdoms</button>
+    <button class="nav-link" data-target="essentials">Essentials</button>
+  </nav>
+
+  <div class="nav-aside">
+    <div class="theme-switch" role="group" aria-label="Theme switcher">
+      <button class="theme-dot active" data-theme-btn="frost" aria-label="Frost theme" aria-pressed="true"></button>
+      <button class="theme-dot" data-theme-btn="aurora" aria-label="Aurora theme" aria-pressed="false"></button>
+      <button class="theme-dot" data-theme-btn="ember" aria-label="Ember theme" aria-pressed="false"></button>
+      <button class="theme-dot" data-theme-btn="midnight" aria-label="Midnight theme" aria-pressed="false"></button>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><line class="ti" x1="3" y1="6" x2="21" y2="6"/><line class="ti" x1="3" y1="12" x2="21" y2="12"/><line class="ti" x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ============ HOME ============ -->
+  <section class="section active" id="home" aria-labelledby="home-heading">
+    <div class="hero glass">
+      <p class="hero-eyebrow">A Player‑Built Kingdoms Server</p>
+      <h1 id="home-heading">U.N.M Server</h1>
+      <p class="hero-tagline">Three kingdoms, limitless possibilities. Join U.N.M Server — choose your profession, build your wealth, and carve out a legacy that will be remembered.</p>
+    </div>
+
+    <div class="welcome glass">
+      <div>
+        <h3>Welcome, traveler.</h3>
+        <p>U.N.M Server is a player-driven survival experience where your choices actually matter. Whether you want to amass wealth, master a trade, or rise to the rank of a Noble, your legacy is in your hands. Choose your path as a Merchant, an Adventurer, a Vendor, or take on specialized roles unique to each kingdom.</p>
+        <p>Our world runs on a dynamic economy. Earn your fortune through your profession, buy and sell items at the server shop or with other players, and test your wealth in our daily, weekly, monthly, and yearly bidding auctions.</p>
+        <p>But tread carefully: actions have consequences. While each kingdom governs its own local laws, violating global server rules will land you in the <strong>U.N.M Server Court</strong>. Trials are held publicly, allowing the whole community to witness justice unfold.</p>
+      </div>
+      <div class="connect-card glass">
+        <div class="connect-row">
+          <span class="connect-label">Server Address</span>
+          <span class="connect-value">Hidden</span>
+        </div>
+        <div class="connect-row">
+          <span class="connect-label">Version</span>
+          <span class="connect-value">1.20.11 — Java</span>
+        </div>
+        <div class="connect-row">
+          <span class="connect-label">Whitelist</span>
+          <span class="connect-value">Reviewed enrollment</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-strip">
+      <div class="feature glass">
+        <svg class="ficon" viewBox="0 0 24 24"><path class="fi" d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>
+        <h4>Three Living Kingdoms</h4>
+        <p>Each realm has its own land, Monarchy, and laws. Pick a banner, earn your place, and climb the ranks to nobility.</p>
+      </div>
+      <div class="feature glass">
+        <svg class="ficon" viewBox="0 0 24 24"><path class="fi" d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01"/></svg>
+        <h4>Deep Player Economy</h4>
+        <p>Trade with players, use the server shop, and participate in scheduled bidding auctions to multiply your wealth.</p>
+      </div>
+      <div class="feature glass">
+        <svg class="ficon" viewBox="0 0 24 24"><path class="fi" d="M3 21h18M4 21v-4h16v4M6 17V7M10 17V7M14 17V7M18 17V7M3 7l9-4 9 4H3z"/></svg>
+        <h4>UNM Court System</h4>
+        <p>Violators of server rules are brought before the U.N.M Server Court. Watch public trials and see justice served live.</p>
+      </div>
+      <div class="feature glass">
+        <svg class="ficon" viewBox="0 0 24 24"><path class="fi" d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <h4>Forged by Players</h4>
+        <p>No pay-to-win mechanics. Rank, wealth, and power are earned in the world, not the store. What you build is what you keep.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KINGDOMS ============ -->
+  <section class="section" id="kingdoms" aria-labelledby="kingdoms-heading">
+    <div class="section-head">
+      <p class="eyebrow">The Realms</p>
+      <h2 id="kingdoms-heading">Three Kingdoms, One World</h2>
+      <p>Every kingdom on U.N.M Server has its own identity, its own power, and its own rules. Learn what each one stands for before you choose your side.</p>
+    </div>
+
+    <div class="kingdom-grid">
+
+      <!-- Kingdom Of Olise -->
+      <article class="kingdom-card glass">
+        <div>
+          <div class="kingdom-meta">
+            <span>Standing <strong>The Dominant Power</strong></span>
+            <span>Focus <strong>Economy &amp; Influence</strong></span>
+          </div>
+          <h3>Kingdom Of Olise</h3>
+          <p class="kingdom-sigil">Seat of the Royal Academy — First Among All Realms</p>
+          <p>The Kingdom Of Olise is the undisputed economic powerhouse of the server. No other kingdom comes close in wealth, reach, or opportunity — if you are looking for a place to build a fortune, earn a name, or advance through the ranks faster than anywhere else, Olise is where that happens. At its heart stands the Royal Academy, the largest and most prestigious institution on the server. Citizens of Olise do not just participate in the economy — they set its terms. Merchants, scholars, and ambitious newcomers all arrive here first, and many never leave.</p>
+        </div>
+        <div class="kingdom-gallery">
+          <div class="img-slot">
+            <svg viewBox="0 0 24 24"><path class="pi" d="M3 17l5-6 4 4 4-7 5 9"/></svg>
+            <span>Screenshot — Royal Academy</span>
+          </div>
+          <div class="img-slot">
+            <svg viewBox="0 0 24 24"><path class="pi" d="M3 17l5-6 4 4 4-7 5 9"/></svg>
+            <span>Screenshot — Capital district</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Kryden Empire -->
+      <article class="kingdom-card glass">
+        <div>
+          <div class="kingdom-meta">
+            <span>Standing <strong>Rising, But Far Behind</strong></span>
+            <span>Focus <strong>Empire &amp; Community</strong></span>
+          </div>
+          <h3>Kryden Empire</h3>
+          <p class="kingdom-sigil">The Empire That Holds Its Ground</p>
+          <p>The Kryden Empire sits well behind the Kingdom Of Olise — and anyone who tells you otherwise has not seen the numbers. The gap is wide, and closing it is a long road. That said, Kryden is far from a lost cause. The Empire has its own working infrastructure, a loyal and active player base, and a growing sense of its own identity that sets it apart from simply being "the other one." It is a decent place to settle if you prefer a less pressured start, a tighter community feel, and room to grow without competing at Olise's pace from day one.</p>
+        </div>
+        <div class="kingdom-gallery">
+          <div class="img-slot">
+            <svg viewBox="0 0 24 24"><path class="pi" d="M3 17l5-6 4 4 4-7 5 9"/></svg>
+            <span>Screenshot — Empire halls</span>
+          </div>
+          <div class="img-slot">
+            <svg viewBox="0 0 24 24"><path class="pi" d="M3 17l5-6 4 4 4-7 5 9"/></svg>
+            <span>Screenshot — Kryden outpost</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Oblivian Regnum -->
+      <article class="kingdom-card glass kingdom-card--forbidden">
+        <div>
+          <div class="kingdom-meta">
+            <span>Standing <strong>Sealed &amp; Isolated</strong></span>
+            <span>Focus <strong class="focus--forbidden">Entry Forbidden</strong></span>
+          </div>
+          <h3>Oblivian Regnum</h3>
+          <p class="kingdom-sigil kingdom-sigil--forbidden">Beyond This Point — You Are Not Welcome</p>
+          <p>The Oblivian Regnum is the third kingdom on the server. It is also the last thing you will be told about it. Its borders are closed. No player is permitted inside. The Regnum enforces its isolation without negotiation and without exception — attempts to cross its boundary are handled swiftly and without appeal. What exists within its walls, who governs it, and why it remains sealed are not questions that have public answers. This is not a kingdom you join. It is a kingdom that watches.</p>
+        </div>
+        <div class="kingdom-gallery">
+          <div class="img-slot img-slot--forbidden">
+            <svg viewBox="0 0 24 24"><path class="pf" d="M12 17v-2m0 0a3 3 0 100-6 3 3 0 000 6z"/><rect class="pf" x="5" y="11" width="14" height="10" rx="2"/><path class="pf" d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <span>Access Restricted</span>
+          </div>
+          <div class="img-slot img-slot--forbidden">
+            <svg viewBox="0 0 24 24"><path class="pf" d="M12 17v-2m0 0a3 3 0 100-6 3 3 0 000 6z"/><rect class="pf" x="5" y="11" width="14" height="10" rx="2"/><path class="pf" d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <span>Access Restricted</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ ESSENTIALS ============ -->
+  <section class="section" id="essentials" aria-labelledby="essentials-heading">
+    <div class="section-head">
+      <p class="eyebrow">Get Set Up</p>
+      <h2 id="essentials-heading">Everything you need, in one file</h2>
+      <p>Instead of tracking down mods separately, grab the U.N.M Essentials pack below — it bundles everything new players need into a single download.</p>
+    </div>
+
+    <div class="essentials-layout">
+      <div class="contents-card glass">
+        <h3>What's inside</h3>
+        <ul class="contents-list">
+          <li><svg viewBox="0 0 24 24"><path class="ci" d="M20 6L9 17l-5-5"/></svg> Contains all the essential modifications required to successfully connect and play on the server.</li>
+          <li><svg viewBox="0 0 24 24"><path class="ci" d="M20 6L9 17l-5-5"/></svg> Pre-packaged with all the necessary core and library mods, so everything works instantly without crashes.</li>
+          <li><svg viewBox="0 0 24 24"><path class="ci" d="M20 6L9 17l-5-5"/></svg> Includes carefully selected performance-enhancing mods to ensure smooth, high-FPS gameplay for all setups.</li>
+          <li><svg viewBox="0 0 24 24"><path class="ci" d="M20 6L9 17l-5-5"/></svg> Designed strictly to improve your gameplay and quality of life without any negative side effects or lag.</li>
+          <li><svg viewBox="0 0 24 24"><path class="ci" d="M20 6L9 17l-5-5"/></svg> A complete, all-in-one bundle so you can skip the hassle of downloading individual files and get straight to playing.</li>
+        </ul>
+      </div>
+
+      <div class="download-card glass">
+        <div class="file-row">
+          <div class="file-icon">
+            <svg viewBox="0 0 24 24"><path class="fii" d="M4 17V7a2 2 0 012-2h7l5 5v7a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path class="fii" d="M9 21v-6h6v6"/></svg>
+          </div>
+          <div>
+            <div class="file-name">UNM-Essentials-Pack.rar</div>
+            <div class="file-sub">Pack v3 ~184 MB · Updated for 1.20.11</div>
+          </div>
+        </div>
+
+        <!-- THIS IS THE LINK YOU NEED TO REPLACE LATER -->
+        <a class="btn btn-primary" id="downloadBtn" href="PASTE_YOUR_GITHUB_LINK_HERE" download>
+          <svg viewBox="0 0 24 24"><path class="bi" d="M12 3v12m0 0l-4-4m4 4l4-4"/><path class="bi" d="M5 19h14"/></svg>
+          Download Essentials Pack
+        </a>
+        <p class="download-note">Extract the .rar into your .minecraft folder and follow the included README. Need help? Ask in the U.N.M Server #support channel.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>U.N.M Server &middot; A community-run Minecraft server &middot; <span>play.unmserver.net</span></p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Section navigation ---------- */
+  var navButtons = document.querySelectorAll(".nav-link");
+  var sections = document.querySelectorAll(".section");
+  var navLinks = document.getElementById("navLinks");
+  var navToggle = document.getElementById("navToggle");
+
+  function activateSection(target) {
+    sections.forEach(function (s) {
+      var isMatch = s.id === target;
+      s.classList.toggle("active", isMatch);
+    });
+    navButtons.forEach(function (b) {
+      var isMatch = b.dataset.target === target;
+      b.classList.toggle("active", isMatch);
+      if (isMatch) {
+        b.setAttribute("aria-current", "page");
+      } else {
+        b.removeAttribute("aria-current");
+      }
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  navButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      activateSection(btn.dataset.target);
+      navLinks.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  /* ---------- Mobile nav toggle ---------- */
+  navToggle.addEventListener("click", function () {
+    var isOpen = navLinks.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  /* ---------- Theme switching ---------- */
+  var themeButtons = document.querySelectorAll(".theme-dot");
+  themeButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var theme = btn.dataset.themeBtn;
+      document.documentElement.setAttribute("data-theme", theme);
+      themeButtons.forEach(function (b) {
+        var isMatch = b === btn;
+        b.classList.toggle("active", isMatch);
+        b.setAttribute("aria-pressed", String(isMatch));
+      });
+    });
+  });
+
+  /* ---------- Download feedback toast ---------- */
+  var downloadBtn = document.getElementById("downloadBtn");
+  var toast = document.getElementById("toast");
+  var toastTimer = null;
+
+  downloadBtn.addEventListener("click", function () {
+    toast.textContent = "Starting download — UNM-Essentials-Pack.rar";
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove("show");
+    }, 3200);
+  });
+})();
+</script>
+
+</body>
+</html>
