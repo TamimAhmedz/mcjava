@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="frost">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
 
 <style>
 /* ============================================================
-   AETHERFALL — Frost Glassmorphism Theme System
+   AETHERFALL — Glassmorphism Theme System (3 themes + particles)
    ============================================================ */
 
 /* ---------- Reset ---------- */
@@ -45,72 +45,53 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ---------- Theme: FROST (default) ---------- */
-[data-theme="frost"]{
-  --bg-0: #060d16;
-  --bg-1: #0d2335;
-  --aurora-a: #5fe0c4;
-  --aurora-b: #4f8ff0;
-  --aurora-c: #8fd9ff;
-  --glass-fill: rgba(184, 222, 240, 0.07);
-  --glass-fill-strong: rgba(184, 222, 240, 0.13);
-  --glass-border: rgba(204, 236, 250, 0.18);
-  --text-0: #eef6fb;
-  --text-1: #9fc1d2;
-  --accent: #6fe9d2;
-  --accent-strong: #2fb6e0;
-  --accent-contrast: #04141c;
+/* ---------- Theme: DARK (embers/smoke) ---------- */
+[data-theme="dark"]{
+  --bg-0: #07050a;
+  --bg-1: #1a0f12;
+  --particle-bg-from: #1a0f12;
+  --particle-bg-to: #07050a;
+  --glass-fill: rgba(255, 190, 150, 0.06);
+  --glass-fill-strong: rgba(255, 190, 150, 0.11);
+  --glass-border: rgba(255, 200, 160, 0.16);
+  --text-0: #f6ece4;
+  --text-1: #ad8f86;
+  --accent: #ff8a4d;
+  --accent-strong: #e0512f;
+  --accent-contrast: #1a0904;
 }
 
-/* ---------- Theme: AURORA ---------- */
-[data-theme="aurora"]{
+/* ---------- Theme: WHITE (light, dust motes) ---------- */
+[data-theme="white"]{
+  --bg-0: #ffffff;
+  --bg-1: #ffffff;
+  --particle-bg-from: #ffffff;
+  --particle-bg-to: #ffffff;
+  --glass-fill: rgba(20, 30, 40, 0.035);
+  --glass-fill-strong: rgba(20, 30, 40, 0.06);
+  --glass-border: rgba(20, 30, 40, 0.12);
+  --text-0: #11161c;
+  --text-1: #5c6672;
+  --accent: #1f8f78;
+  --accent-strong: #14705e;
+  --accent-contrast: #ffffff;
+  --shadow-card: 0 10px 30px rgba(20,30,40,0.10), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* ---------- Theme: PURPLE (gradient, magic sparkles) ---------- */
+[data-theme="purple"]{
   --bg-0: #0c0820;
-  --bg-1: #1d1140;
-  --aurora-a: #b388ff;
-  --aurora-b: #5fe0c4;
-  --aurora-c: #ff8fd0;
-  --glass-fill: rgba(212, 192, 250, 0.07);
-  --glass-fill-strong: rgba(212, 192, 250, 0.13);
-  --glass-border: rgba(224, 204, 255, 0.2);
+  --bg-1: #2a1454;
+  --particle-bg-from: #2d1457;
+  --particle-bg-to: #0a0620;
+  --glass-fill: rgba(212, 182, 255, 0.07);
+  --glass-fill-strong: rgba(212, 182, 255, 0.13);
+  --glass-border: rgba(224, 198, 255, 0.2);
   --text-0: #f4eefc;
-  --text-1: #b8a9d8;
-  --accent: #cda6ff;
-  --accent-strong: #9b6bff;
-  --accent-contrast: #100726;
-}
-
-/* ---------- Theme: EMBER ---------- */
-[data-theme="ember"]{
-  --bg-0: #170d08;
-  --bg-1: #321608;
-  --aurora-a: #ff8a3d;
-  --aurora-b: #ff4d4d;
-  --aurora-c: #4fb0e0;
-  --glass-fill: rgba(255, 202, 160, 0.07);
-  --glass-fill-strong: rgba(255, 202, 160, 0.13);
-  --glass-border: rgba(255, 212, 180, 0.2);
-  --text-0: #fdf1e8;
-  --text-1: #d8ad8c;
-  --accent: #ffae6b;
-  --accent-strong: #ff7a3d;
-  --accent-contrast: #1a0c04;
-}
-
-/* ---------- Theme: MIDNIGHT ---------- */
-[data-theme="midnight"]{
-  --bg-0: #04050a;
-  --bg-1: #0b0d18;
-  --aurora-a: #8b7cf0;
-  --aurora-b: #3f7d72;
-  --aurora-c: #5566aa;
-  --glass-fill: rgba(182, 182, 222, 0.05);
-  --glass-fill-strong: rgba(182, 182, 222, 0.1);
-  --glass-border: rgba(202, 202, 232, 0.14);
-  --text-0: #e9e9f3;
-  --text-1: #8e8ea8;
-  --accent: #a79bf5;
-  --accent-strong: #6a5acd;
-  --accent-contrast: #0a0a14;
+  --text-1: #b3a0d6;
+  --accent: #c896ff;
+  --accent-strong: #9b4dff;
+  --accent-contrast: #120633;
 }
 
 /* ---------- Body & ambient background ---------- */
@@ -120,46 +101,21 @@ body{
   color: var(--text-0);
   background: radial-gradient(ellipse 120% 80% at 50% -10%, var(--bg-1), var(--bg-0) 60%);
   overflow-x: hidden;
-  transition: background 0.6s var(--ease);
+  transition: background 0.6s var(--ease), color 0.6s var(--ease);
 }
 
-.aurora-field{
+[data-theme="purple"] body{
+  background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-0) 55%, #050310 100%);
+}
+
+#particle-canvas{
   position: fixed;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
-.aurora-field span{
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(110px);
-  opacity: 0.55;
-  mix-blend-mode: screen;
-  will-change: transform;
-}
-.aurora-field .b1{
-  width: 50vmax; height: 50vmax;
-  top: -15%; left: -10%;
-  background: var(--aurora-a);
-  animation: driftA 38s var(--ease) infinite alternate;
-}
-.aurora-field .b2{
-  width: 42vmax; height: 42vmax;
-  bottom: -18%; right: -8%;
-  background: var(--aurora-b);
-  animation: driftB 46s var(--ease) infinite alternate;
-}
-.aurora-field .b3{
-  width: 34vmax; height: 34vmax;
-  top: 30%; left: 55%;
-  background: var(--aurora-c);
-  opacity: 0.35;
-  animation: driftC 54s var(--ease) infinite alternate;
-}
-@keyframes driftA{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(8vw, 6vh) scale(1.15); } }
-@keyframes driftB{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(-7vw, -5vh) scale(0.9); } }
-@keyframes driftC{ from{ transform: translate(0,0) scale(1); } to{ transform: translate(-5vw, 8vh) scale(1.2); } }
 
 /* ---------- Glass utility ---------- */
 .glass{
@@ -225,6 +181,8 @@ body{
   border-radius: 999px;
   padding: 0.3rem;
 }
+[data-theme="white"] .nav-links{ background: rgba(20,30,40,0.05); }
+
 .nav-link{
   padding: 0.5rem 1.05rem;
   border-radius: 999px;
@@ -252,6 +210,7 @@ body{
   position: relative;
   transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
 }
+[data-theme="white"] .theme-dot{ border-color: rgba(20,30,40,0.18); }
 .theme-dot:hover{ transform: translateY(-2px); }
 .theme-dot.active{ border-color: var(--text-0); }
 .theme-dot.active::after{
@@ -261,10 +220,9 @@ body{
   border-radius: 50%;
   opacity: 0.55;
 }
-.theme-dot[data-theme-btn="frost"]{ background: linear-gradient(135deg, #5fe0c4, #4f8ff0); }
-.theme-dot[data-theme-btn="aurora"]{ background: linear-gradient(135deg, #b388ff, #ff8fd0); }
-.theme-dot[data-theme-btn="ember"]{ background: linear-gradient(135deg, #ff8a3d, #ff4d4d); }
-.theme-dot[data-theme-btn="midnight"]{ background: linear-gradient(135deg, #8b7cf0, #3f7d72); }
+.theme-dot[data-theme-btn="dark"]{ background: linear-gradient(135deg, #ff8a4d, #1a0f12); }
+.theme-dot[data-theme-btn="white"]{ background: linear-gradient(135deg, #ffffff, #c9d3da); }
+.theme-dot[data-theme-btn="purple"]{ background: linear-gradient(135deg, #c896ff, #2a1454); }
 
 .nav-toggle{
   display: none;
@@ -318,6 +276,9 @@ body{
   inset: 0;
   background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,255,255,0.07), transparent 60%);
   pointer-events: none;
+}
+[data-theme="white"] .hero::before{
+  background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(20,30,40,0.04), transparent 60%);
 }
 .hero-eyebrow{
   font-size: 0.8rem;
@@ -448,6 +409,7 @@ body{
   text-align: center;
   padding: 0.5rem;
 }
+[data-theme="white"] .img-slot{ background: rgba(20,30,40,0.035); }
 .img-slot svg{ width: 26px; height: 26px; opacity: 0.7; }
 .img-slot .pi{ stroke: var(--text-1); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .img-slot span{ font-size: 0.7rem; letter-spacing: 0.03em; line-height: 1.4; }
@@ -609,19 +571,15 @@ a:focus-visible, button:focus-visible{
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce){
-  .aurora-field span{ animation: none; }
   .section.active{ animation: none; }
   .btn-primary:hover{ transform: none; }
+  #particle-canvas{ display: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="aurora-field" aria-hidden="true">
-  <span class="b1"></span>
-  <span class="b2"></span>
-  <span class="b3"></span>
-</div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
 
 <header class="topnav">
   <div class="brand">
@@ -641,10 +599,9 @@ a:focus-visible, button:focus-visible{
 
   <div class="nav-aside">
     <div class="theme-switch" role="group" aria-label="Theme switcher">
-      <button class="theme-dot active" data-theme-btn="frost" aria-label="Frost theme" aria-pressed="true"></button>
-      <button class="theme-dot" data-theme-btn="aurora" aria-label="Aurora theme" aria-pressed="false"></button>
-      <button class="theme-dot" data-theme-btn="ember" aria-label="Ember theme" aria-pressed="false"></button>
-      <button class="theme-dot" data-theme-btn="midnight" aria-label="Midnight theme" aria-pressed="false"></button>
+      <button class="theme-dot active" data-theme-btn="dark" aria-label="Dark theme" aria-pressed="true"></button>
+      <button class="theme-dot" data-theme-btn="white" aria-label="White theme" aria-pressed="false"></button>
+      <button class="theme-dot" data-theme-btn="purple" aria-label="Purple theme" aria-pressed="false"></button>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
       <svg viewBox="0 0 24 24"><line class="ti" x1="3" y1="6" x2="21" y2="6"/><line class="ti" x1="3" y1="12" x2="21" y2="12"/><line class="ti" x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -844,7 +801,9 @@ a:focus-visible, button:focus-visible{
 (function () {
   "use strict";
 
-  /* ---------- Section navigation ---------- */
+  /* ============================================================
+     Section navigation
+     ============================================================ */
   var navButtons = document.querySelectorAll(".nav-link");
   var sections = document.querySelectorAll(".section");
   var navLinks = document.getElementById("navLinks");
@@ -881,7 +840,9 @@ a:focus-visible, button:focus-visible{
     navToggle.setAttribute("aria-expanded", String(isOpen));
   });
 
-  /* ---------- Theme switching ---------- */
+  /* ============================================================
+     Theme switching
+     ============================================================ */
   var themeButtons = document.querySelectorAll(".theme-dot");
   themeButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -892,6 +853,7 @@ a:focus-visible, button:focus-visible{
         b.classList.toggle("active", isMatch);
         b.setAttribute("aria-pressed", String(isMatch));
       });
+      if (window.__unmParticles) window.__unmParticles.setTheme(theme);
     });
   });
 
@@ -908,6 +870,237 @@ a:focus-visible, button:focus-visible{
       toast.classList.remove("show");
     }, 3200);
   });
+
+  /* ============================================================
+     PARTICLE SYSTEM
+     Three distinct behaviors, one canvas:
+       - dark   -> embers & smoke, drifting up, scattered by cursor
+       - white  -> soft dust motes / light specks, gently pulled toward cursor
+       - purple -> magic sparkles & stars, twinkling, trailing near cursor
+     ============================================================ */
+  (function () {
+    var canvas = document.getElementById("particle-canvas");
+    var ctx = canvas.getContext("2d");
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0;
+    var particles = [];
+    var theme = document.documentElement.getAttribute("data-theme") || "dark";
+    var mouse = { x: -9999, y: -9999, active: false };
+    var rafId = null;
+
+    var THEME_CONFIG = {
+      dark: {
+        count: 70,
+        colors: ["255,138,77", "255,90,50", "255,200,140", "180,80,40"],
+        baseSize: [0.8, 2.2],
+        speed: [0.15, 0.55],
+        glow: true
+      },
+      white: {
+        count: 60,
+        colors: ["120,140,160", "30,143,120", "150,160,170", "200,210,215"],
+        baseSize: [0.8, 2.4],
+        speed: [0.05, 0.22],
+        glow: false
+      },
+      purple: {
+        count: 80,
+        colors: ["200,150,255", "255,255,255", "150,100,255", "230,200,255"],
+        baseSize: [0.6, 2.0],
+        speed: [0.05, 0.25],
+        glow: true
+      }
+    };
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function pick(arr) { return arr[(Math.random() * arr.length) | 0]; }
+
+    function makeParticle(cfg) {
+      var size = rand(cfg.baseSize[0], cfg.baseSize[1]);
+      return {
+        x: rand(0, W),
+        y: rand(0, H),
+        size: size,
+        baseSize: size,
+        color: pick(cfg.colors),
+        speed: rand(cfg.speed[0], cfg.speed[1]),
+        angle: rand(0, Math.PI * 2),
+        drift: rand(-0.3, 0.3),
+        alpha: rand(0.25, 0.9),
+        twinklePhase: rand(0, Math.PI * 2),
+        twinkleSpeed: rand(0.01, 0.035),
+        vx: 0,
+        vy: 0
+      };
+    }
+
+    function buildParticles() {
+      var cfg = THEME_CONFIG[theme];
+      particles = [];
+      for (var i = 0; i < cfg.count; i++) {
+        particles.push(makeParticle(cfg));
+      }
+    }
+
+    function setTheme(next) {
+      theme = next;
+      buildParticles();
+    }
+
+    function updateDark(p, cfg) {
+      // Embers rise and drift; smoke sway. Cursor scatters them outward.
+      p.y -= p.speed;
+      p.x += Math.sin(p.y * 0.01 + p.twinklePhase) * p.drift;
+      p.twinklePhase += p.twinkleSpeed;
+      p.alpha = 0.35 + Math.abs(Math.sin(p.twinklePhase)) * 0.5;
+
+      if (mouse.active) {
+        var dx = p.x - mouse.x, dy = p.y - mouse.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var radius = 140;
+        if (dist < radius && dist > 0.01) {
+          var force = (1 - dist / radius) * 2.2;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+      }
+
+      if (p.y < -10) {
+        p.y = H + 10;
+        p.x = rand(0, W);
+      }
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+    }
+
+    function updateWhite(p, cfg) {
+      // Soft dust motes, slow ambient float; gently pulled toward cursor like light catching dust.
+      p.x += Math.cos(p.angle) * p.speed;
+      p.y += Math.sin(p.angle) * p.speed * 0.6 + 0.05;
+      p.angle += p.drift * 0.01;
+      p.twinklePhase += p.twinkleSpeed;
+      p.alpha = 0.18 + Math.abs(Math.sin(p.twinklePhase)) * 0.35;
+
+      if (mouse.active) {
+        var dx = mouse.x - p.x, dy = mouse.y - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var radius = 180;
+        if (dist < radius && dist > 0.01) {
+          var pull = (1 - dist / radius) * 0.35;
+          p.x += (dx / dist) * pull;
+          p.y += (dy / dist) * pull;
+        }
+      }
+
+      if (p.y > H + 10) p.y = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+    }
+
+    function updatePurple(p, cfg) {
+      // Magic sparkles: gentle float + strong twinkle; brighten and trail near cursor.
+      p.x += Math.cos(p.angle) * p.speed * 0.5;
+      p.y += Math.sin(p.angle) * p.speed * 0.5;
+      p.angle += p.drift * 0.015;
+      p.twinklePhase += p.twinkleSpeed * 1.4;
+
+      var twinkle = (Math.sin(p.twinklePhase) + 1) / 2;
+      p.alpha = 0.2 + twinkle * 0.75;
+      p.size = p.baseSize * (0.7 + twinkle * 0.6);
+
+      if (mouse.active) {
+        var dx = mouse.x - p.x, dy = mouse.y - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var radius = 160;
+        if (dist < radius && dist > 0.01) {
+          var pull = (1 - dist / radius) * 0.5;
+          p.x += (dx / dist) * pull;
+          p.y += (dy / dist) * pull;
+          p.alpha = Math.min(1, p.alpha + (1 - dist / radius) * 0.5);
+        }
+      }
+
+      if (p.y > H + 10) p.y = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+    }
+
+    var UPDATERS = { dark: updateDark, white: updateWhite, purple: updatePurple };
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var cfg = THEME_CONFIG[theme];
+      var updater = UPDATERS[theme];
+
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        updater(p, cfg);
+
+        ctx.beginPath();
+        if (cfg.glow) {
+          var glowR = p.size * 2.2;
+          var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+          grad.addColorStop(0, "rgba(" + p.color + "," + p.alpha + ")");
+          grad.addColorStop(1, "rgba(" + p.color + ",0)");
+          ctx.fillStyle = grad;
+          ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = "rgba(" + p.color + "," + p.alpha + ")";
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      rafId = requestAnimationFrame(draw);
+    }
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", function (e) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+    });
+    window.addEventListener("mouseleave", function () {
+      mouse.active = false;
+    });
+    window.addEventListener("touchmove", function (e) {
+      if (e.touches && e.touches[0]) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+        mouse.active = true;
+      }
+    }, { passive: true });
+    window.addEventListener("touchend", function () {
+      mouse.active = false;
+    });
+
+    resize();
+    buildParticles();
+
+    if (!reduceMotion) {
+      draw();
+    } else {
+      // Render a single static frame for reduced-motion users.
+      ctx.clearRect(0, 0, W, H);
+    }
+
+    window.__unmParticles = { setTheme: setTheme };
+  })();
 })();
 </script>
 
