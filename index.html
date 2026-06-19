@@ -647,10 +647,18 @@ a:focus-visible, button:focus-visible{
   </div>
 </header>
 
-<!-- Ambient page audio. Three tracks — one per section. Replace the src= paths with your audio files later. -->
-<audio id="audio-home" src="audio/home-theme.mp3" preload="none"></audio>
-<audio id="audio-kingdoms" src="audio/kingdoms-theme.mp3" preload="none"></audio>
-<audio id="audio-essentials" src="audio/essentials-theme.mp3" preload="none"></audio>
+<!-- ============================================================
+     AMBIENT PAGE AUDIO — one looping track per section.
+     Expects the files below to live in an "ER" folder placed next
+     to this HTML file. Make sure ER/Mk.mp3, ER/Me.mp3, and ER/Mj.mp3
+     are uploaded alongside index.html when you host the site.
+     ============================================================ -->
+<!-- Home page track -->
+<audio id="audio-home" src="ER/Mk.mp3" preload="none"></audio>
+<!-- Kingdoms page track -->
+<audio id="audio-kingdoms" src="ER/Me.mp3" preload="none"></audio>
+<!-- Essentials page track -->
+<audio id="audio-essentials" src="ER/Mj.mp3" preload="none"></audio>
 
 <main class="page">
 
