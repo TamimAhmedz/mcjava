@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>U.N.M GServer — Minecraft Kingdoms</title>
+<title>U.N.M Server — Minecraft Kingdoms</title>
 
 <!-- This line adds your logo to the browser tab -->
 <link rel="icon" type="image/svg+xml" href="GG/Xc.svg">
@@ -981,7 +981,8 @@ a:focus-visible, button:focus-visible{
      One looping track per page (Home / Kingdoms / Essentials).
      Behavior: play the track once through -> silent 15s pause ->
      play again -> repeat. Switching pages swaps the active track.
-     Files: ER/Mk.mp3 (home), ER/Me.mp3 (kingdoms), ER/Mj.mp3 (essentials).
+     Drop your files into audio/home-theme.mp3, audio/kingdoms-theme.mp3,
+     audio/essentials-theme.mp3 (or update the <audio> src attributes).
      ============================================================ */
   (function () {
     var PAUSE_BETWEEN_LOOPS_MS = 15000;
@@ -1030,10 +1031,8 @@ a:focus-visible, button:focus-visible{
       var p = el.play();
       if (p && typeof p.catch === "function") {
         p.catch(function () {
-          /* Autoplay was blocked (no user interaction yet, or this is the
-             very first play attempt on this element). The persistent
-             pointerdown/keydown listener below will retry automatically
-             the moment the visitor clicks or types anywhere on the page. */
+          /* Autoplay can be blocked until the user interacts with the page.
+             The next click on the speaker button or a nav link will retry. */
         });
       }
     }
@@ -1068,17 +1067,16 @@ a:focus-visible, button:focus-visible{
 
     updateButtonState();
 
-    // Browsers block audio autoplay before any user interaction with the
-    // page. This listener stays active for the whole session (it does
-    // NOT remove itself after one use) so that no matter which page you
-    // land on or switch to first, a blocked play() gets retried on the
-    // next click/tap/keypress anywhere on the page.
+    // Browsers block audio autoplay before any user interaction.
+    // Try immediately, and retry on first interaction if it was blocked.
     playTrack(currentPage);
-    function resumeOnInteract() {
+    var resumeOnInteract = function () {
       if (!muted && tracks[currentPage] && tracks[currentPage].paused) {
         playTrack(currentPage);
       }
-    }
+      window.removeEventListener("pointerdown", resumeOnInteract);
+      window.removeEventListener("keydown", resumeOnInteract);
+    };
     window.addEventListener("pointerdown", resumeOnInteract);
     window.addEventListener("keydown", resumeOnInteract);
 
