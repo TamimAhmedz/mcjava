@@ -232,6 +232,27 @@ body{
 .theme-dot[data-theme-btn="white"]{ background: linear-gradient(135deg, #ffffff, #c9d3da); }
 .theme-dot[data-theme-btn="purple"]{ background: linear-gradient(135deg, #c896ff, #2a1454); }
 
+/* ---------- Audio toggle ---------- */
+.audio-toggle{
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), background 0.3s var(--ease);
+}
+.audio-toggle:hover{ transform: translateY(-2px); }
+.audio-toggle svg{ width: 17px; height: 17px; }
+.audio-toggle .au{ stroke: var(--text-0); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s var(--ease); }
+.audio-toggle .au-fill{ fill: var(--text-0); stroke: none; transition: fill 0.3s var(--ease); }
+.audio-toggle .au-mute-line{ stroke: #e0512f; opacity: 0; transition: opacity 0.25s var(--ease); }
+.audio-toggle.is-muted .au-mute-line{ opacity: 1; }
+.audio-toggle.is-muted .au-wave{ opacity: 0.25; }
+.audio-toggle.is-playing{ border-color: var(--accent); }
+
 .nav-toggle{
   display: none;
   width: 38px; height: 38px;
@@ -605,6 +626,16 @@ a:focus-visible, button:focus-visible{
   </nav>
 
   <div class="nav-aside">
+    <!-- Speaker/audio toggle — sits left of the theme switcher. On by default. -->
+    <button class="audio-toggle is-playing" id="audioToggle" aria-label="Mute ambient audio" aria-pressed="false">
+      <svg viewBox="0 0 24 24">
+        <path class="au au-fill" d="M4 9v6h4l5 5V4L8 9H4z"></path>
+        <path class="au au-wave" d="M16.5 8.5a5 5 0 010 7"></path>
+        <path class="au au-wave" d="M19 6a8.5 8.5 0 010 12"></path>
+        <line class="au au-mute-line" x1="3" y1="3" x2="21" y2="21"></line>
+      </svg>
+    </button>
+
     <div class="theme-switch" role="group" aria-label="Theme switcher">
       <button class="theme-dot active" data-theme-btn="dark" aria-label="Dark theme" aria-pressed="true"></button>
       <button class="theme-dot" data-theme-btn="white" aria-label="White theme" aria-pressed="false"></button>
@@ -615,6 +646,11 @@ a:focus-visible, button:focus-visible{
     </button>
   </div>
 </header>
+
+<!-- Ambient page audio. Three tracks — one per section. Replace the src= paths with your audio files later. -->
+<audio id="audio-home" src="audio/home-theme.mp3" preload="none"></audio>
+<audio id="audio-kingdoms" src="audio/kingdoms-theme.mp3" preload="none"></audio>
+<audio id="audio-essentials" src="audio/essentials-theme.mp3" preload="none"></audio>
 
 <main class="page">
 
@@ -816,7 +852,7 @@ a:focus-visible, button:focus-visible{
   var navLinks = document.getElementById("navLinks");
   var navToggle = document.getElementById("navToggle");
 
-  function activateSection(target) {
+  function renderSection(target) {
     sections.forEach(function (s) {
       var isMatch = s.id === target;
       s.classList.toggle("active", isMatch);
@@ -831,11 +867,65 @@ a:focus-visible, button:focus-visible{
       }
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.__unmAudio) window.__unmAudio.setPage(target);
   }
+
+  // Some embedded/sandboxed preview environments (e.g. iframes with a
+  // mismatched document origin) block the History API entirely and throw
+  // a SecurityError. historyAvailable stays false in that case so the
+  // site falls back to plain section-switching instead of crashing.
+  // On a normally hosted page this is always true and the back-button
+  // behavior below works as intended.
+  var historyAvailable = true;
+  var fallbackState = { section: "home" };
+
+  function safePushState(state, url) {
+    try {
+      history.pushState(state, "", url);
+    } catch (err) {
+      historyAvailable = false;
+      fallbackState = state;
+    }
+  }
+
+  function safeReplaceState(state, url) {
+    try {
+      history.replaceState(state, "", url);
+    } catch (err) {
+      historyAvailable = false;
+      fallbackState = state;
+    }
+  }
+
+  // Navigating via a click pushes a new history entry, so the browser's
+  // back button retraces each step the visitor actually took (Home ->
+  // Kingdoms -> Essentials -> back to Kingdoms -> back to Home -> back
+  // leaves the site), instead of jumping straight out after one section.
+  function navigateToSection(target) {
+    var current = historyAvailable ? history.state : fallbackState;
+    if (current && current.section === target) {
+      renderSection(target);
+      return;
+    }
+    safePushState({ section: target }, "#" + target);
+    renderSection(target);
+  }
+
+  // Establish a baseline history entry for the initial section so the
+  // very first "back" press (with no prior in-site navigation) exits
+  // the site normally instead of having nowhere to go.
+  if (!history.state) {
+    safeReplaceState({ section: "home" }, "#home");
+  }
+
+  window.addEventListener("popstate", function (e) {
+    var section = (e.state && e.state.section) || "home";
+    renderSection(section);
+  });
 
   navButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
-      activateSection(btn.dataset.target);
+      navigateToSection(btn.dataset.target);
       navLinks.classList.remove("open");
       navToggle.setAttribute("aria-expanded", "false");
     });
@@ -877,6 +967,113 @@ a:focus-visible, button:focus-visible{
       toast.classList.remove("show");
     }, 3200);
   });
+
+  /* ============================================================
+     AMBIENT AUDIO SYSTEM
+     One looping track per page (Home / Kingdoms / Essentials).
+     Behavior: play the track once through -> silent 15s pause ->
+     play again -> repeat. Switching pages swaps the active track.
+     Drop your files into audio/home-theme.mp3, audio/kingdoms-theme.mp3,
+     audio/essentials-theme.mp3 (or update the <audio> src attributes).
+     ============================================================ */
+  (function () {
+    var PAUSE_BETWEEN_LOOPS_MS = 15000;
+
+    var tracks = {
+      home: document.getElementById("audio-home"),
+      kingdoms: document.getElementById("audio-kingdoms"),
+      essentials: document.getElementById("audio-essentials")
+    };
+
+    var toggleBtn = document.getElementById("audioToggle");
+    var currentPage = "home";
+    var muted = false; // on by default
+    var pauseTimer = null;
+
+    Object.keys(tracks).forEach(function (key) {
+      var el = tracks[key];
+      if (!el) return;
+      el.loop = false; // we handle looping manually to insert the 15s gap
+      el.volume = 0.55;
+      el.addEventListener("ended", function () {
+        if (muted) return;
+        clearTimeout(pauseTimer);
+        pauseTimer = setTimeout(function () {
+          if (!muted && currentPage === key) {
+            playTrack(key);
+          }
+        }, PAUSE_BETWEEN_LOOPS_MS);
+      });
+    });
+
+    function stopAllExcept(activeKey) {
+      Object.keys(tracks).forEach(function (key) {
+        var el = tracks[key];
+        if (!el || key === activeKey) return;
+        el.pause();
+        el.currentTime = 0;
+      });
+    }
+
+    function playTrack(key) {
+      var el = tracks[key];
+      if (!el || muted) return;
+      stopAllExcept(key);
+      el.currentTime = 0;
+      var p = el.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(function () {
+          /* Autoplay can be blocked until the user interacts with the page.
+             The next click on the speaker button or a nav link will retry. */
+        });
+      }
+    }
+
+    function setPage(page) {
+      if (!tracks[page]) return;
+      clearTimeout(pauseTimer);
+      currentPage = page;
+      if (!muted) playTrack(page);
+    }
+
+    function updateButtonState() {
+      toggleBtn.classList.toggle("is-muted", muted);
+      toggleBtn.classList.toggle("is-playing", !muted);
+      toggleBtn.setAttribute("aria-pressed", String(muted));
+      toggleBtn.setAttribute("aria-label", muted ? "Unmute ambient audio" : "Mute ambient audio");
+    }
+
+    toggleBtn.addEventListener("click", function () {
+      muted = !muted;
+      updateButtonState();
+      if (muted) {
+        clearTimeout(pauseTimer);
+        Object.keys(tracks).forEach(function (key) {
+          var el = tracks[key];
+          if (el) el.pause();
+        });
+      } else {
+        playTrack(currentPage);
+      }
+    });
+
+    updateButtonState();
+
+    // Browsers block audio autoplay before any user interaction.
+    // Try immediately, and retry on first interaction if it was blocked.
+    playTrack(currentPage);
+    var resumeOnInteract = function () {
+      if (!muted && tracks[currentPage] && tracks[currentPage].paused) {
+        playTrack(currentPage);
+      }
+      window.removeEventListener("pointerdown", resumeOnInteract);
+      window.removeEventListener("keydown", resumeOnInteract);
+    };
+    window.addEventListener("pointerdown", resumeOnInteract);
+    window.addEventListener("keydown", resumeOnInteract);
+
+    window.__unmAudio = { setPage: setPage };
+  })();
 
   /* ============================================================
      PARTICLE SYSTEM
