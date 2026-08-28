@@ -14,10 +14,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,500&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   U.N.M — "Ledger & Seal" theme system
-   A cartographer's war-room, not a fantasy splash screen.
-   ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -46,7 +42,6 @@ html { scroll-behavior: smooth; }
   --maxw: 1320px;
 }
 
-/* ---------- Theme: DARK — "Obsidian Ledger" ---------- */
 [data-theme="dark"]{
   --bg-0: #0a0c0f;
   --bg-1: #0e1114;
@@ -64,7 +59,6 @@ html { scroll-behavior: smooth; }
   --danger-soft: rgba(179, 80, 63, 0.1);
 }
 
-/* ---------- Theme: WHITE — "Vellum" ---------- */
 [data-theme="white"]{
   --bg-0: #f7f4ed;
   --bg-1: #f2efe6;
@@ -82,7 +76,6 @@ html { scroll-behavior: smooth; }
   --danger-soft: rgba(138, 51, 38, 0.06);
 }
 
-/* ---------- Theme: PURPLE — "Royal Seal" ---------- */
 [data-theme="purple"]{
   --bg-0: #110a1d;
   --bg-1: #150c24;
@@ -110,7 +103,6 @@ body{
   position: relative;
 }
 
-/* Faint fixed map-grid backdrop, theme-tinted */
 body::before{
   content: "";
   position: fixed;
@@ -134,7 +126,6 @@ body::before{
   pointer-events: none;
 }
 
-/* ---------- Panel utility (replaces glass) ---------- */
 .panel{
   background: var(--panel);
   border: 1px solid var(--line);
@@ -149,7 +140,6 @@ body::before{
   background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
 }
 
-/* Corner-bracket motif — map-legend feel, used sparingly on key panels */
 .bracketed{ position: relative; }
 .bracketed::after{
   content: "";
@@ -160,15 +150,12 @@ body::before{
   pointer-events: none;
 }
 
-/* ---------- Layout shell ---------- */
 .page{
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--space-3) var(--space-5);
 }
 
-/* Asymmetric balance utilities — pin a block hard against one edge of
-   .page with a real gap on the other side, not a token nudge. */
 .offset-left{
   margin-right: auto;
   margin-left: 0;
@@ -185,7 +172,6 @@ body::before{
   .offset-left, .offset-right{ width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
 }
 
-/* ---------- Top navigation ---------- */
 .topnav{
   position: sticky;
   top: 0;
@@ -327,7 +313,6 @@ body::before{
 .nav-toggle svg{ width: 16px; height: 16px; }
 .nav-toggle .ti{ stroke: var(--text-0); stroke-width: 1.6; stroke-linecap: round; }
 
-/* ---------- Section visibility & entrance ---------- */
 .section{ display: none; }
 .section.active{
   display: block;
@@ -370,9 +355,6 @@ body::before{
   padding-left: 0;
 }
 
-/* ============================================================
-   HOME
-   ============================================================ */
 .hero{
   padding: var(--space-5) var(--space-3) var(--space-4);
   margin-bottom: var(--space-4);
@@ -490,9 +472,6 @@ body::before{
 .feature h4{ margin: 0 0 0.5rem; font-size: 0.96rem; font-weight: 600; }
 .feature p{ margin: 0; color: var(--text-1); font-size: 0.85rem; line-height: 1.65; }
 
-/* ============================================================
-   KINGDOMS
-   ============================================================ */
 .kingdom-grid{
   display: flex;
   flex-direction: column;
@@ -572,7 +551,6 @@ body::before{
 .img-slot .pi{ stroke: var(--text-2); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .img-slot span{ font-size: 0.64rem; letter-spacing: 0.04em; line-height: 1.4; text-transform: uppercase; }
 
-/* Oblivian Regnum — forbidden state */
 .kingdom-card--forbidden .kingdom-seal{ border-color: var(--danger); color: var(--danger); }
 .kingdom-card--forbidden h3{ color: var(--danger); }
 .kingdom-card--forbidden .kingdom-meta span strong{ color: var(--danger); }
@@ -586,9 +564,6 @@ body::before{
 .img-slot--forbidden span{ color: var(--danger) !important; }
 .pf{ stroke: var(--danger); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ============================================================
-   ESSENTIALS
-   ============================================================ */
 .essentials-layout{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -686,7 +661,6 @@ body::before{
 
 .download-note{ font-size: 0.78rem; color: var(--text-2); text-align: center; line-height: 1.6; margin: 0; }
 
-/* ---------- Footer ---------- */
 .site-footer{
   text-align: center;
   padding: var(--space-3) var(--space-3) var(--space-4);
@@ -697,7 +671,6 @@ body::before{
 }
 .site-footer span{ color: var(--accent); }
 
-/* ---------- Toast ---------- */
 .toast{
   position: fixed;
   bottom: 24px;
@@ -716,13 +689,11 @@ body::before{
 }
 .toast.show{ opacity: 1; transform: translate(-50%, 0); }
 
-/* ---------- Focus accessibility ---------- */
 a:focus-visible, button:focus-visible{
   outline: 1px solid var(--accent);
   outline-offset: 3px;
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 900px){
   .welcome{ grid-template-columns: 1fr; }
   .kingdom-card{ grid-template-columns: 1fr; }
@@ -785,7 +756,6 @@ a:focus-visible, button:focus-visible{
   .feature-strip{ grid-template-columns: 1fr; }
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce){
   .section.active{ animation: none; }
   .btn-primary:hover{ transform: none; }
@@ -845,7 +815,6 @@ a:focus-visible, button:focus-visible{
 
 <main class="page">
 
-  <!-- ============ HOME ============ -->
   <section class="section active" id="home" aria-labelledby="home-heading">
     <div class="hero">
       <p class="hero-eyebrow">A Player-Built Kingdoms Server</p>
@@ -901,7 +870,6 @@ a:focus-visible, button:focus-visible{
     </div>
   </section>
 
-  <!-- ============ KINGDOMS ============ -->
   <section class="section" id="kingdoms" aria-labelledby="kingdoms-heading">
     <div class="section-head section-head--kingdoms">
       <p class="eyebrow">The Realms</p>
@@ -911,7 +879,6 @@ a:focus-visible, button:focus-visible{
 
     <div class="kingdom-grid">
 
-      <!-- Kingdom Of Olise -->
       <article class="kingdom-card">
         <div class="kingdom-seal">1</div>
         <div>
@@ -935,7 +902,6 @@ a:focus-visible, button:focus-visible{
         </div>
       </article>
 
-      <!-- Kryden Empire -->
       <article class="kingdom-card">
         <div class="kingdom-seal">2</div>
         <div>
@@ -959,7 +925,6 @@ a:focus-visible, button:focus-visible{
         </div>
       </article>
 
-      <!-- Oblivian Regnum -->
       <article class="kingdom-card kingdom-card--forbidden">
         <div class="kingdom-seal">3</div>
         <div>
@@ -986,7 +951,6 @@ a:focus-visible, button:focus-visible{
     </div>
   </section>
 
-  <!-- ============ ESSENTIALS ============ -->
   <section class="section" id="essentials" aria-labelledby="essentials-heading">
     <div class="section-head">
       <p class="eyebrow">Get Set Up</p>
@@ -1038,9 +1002,6 @@ a:focus-visible, button:focus-visible{
 (function () {
   "use strict";
 
-  /* ============================================================
-     Section navigation
-     ============================================================ */
   var navButtons = document.querySelectorAll(".nav-link");
   var sections = document.querySelectorAll(".section");
   var navLinks = document.getElementById("navLinks");
@@ -1117,9 +1078,6 @@ a:focus-visible, button:focus-visible{
     navToggle.setAttribute("aria-expanded", String(isOpen));
   });
 
-  /* ============================================================
-     Theme switching (persisted across visits via localStorage)
-     ============================================================ */
   var THEME_STORAGE_KEY = "unm-theme";
   var themeButtons = document.querySelectorAll(".theme-dot");
 
@@ -1150,7 +1108,6 @@ a:focus-visible, button:focus-visible{
     });
   });
 
-  /* ---------- Download feedback toast ---------- */
   var downloadBtn = document.getElementById("downloadBtn");
   var toast = document.getElementById("toast");
   var toastTimer = null;
@@ -1164,10 +1121,6 @@ a:focus-visible, button:focus-visible{
     }, 3200);
   });
 
-  /* ============================================================
-     AMBIENT AUDIO SYSTEM — unchanged behavior:
-     play track once -> silent 15s pause -> repeat. Page switch swaps track.
-     ============================================================ */
   (function () {
     var PAUSE_BETWEEN_LOOPS_MS = 15000;
     var MUTE_STORAGE_KEY = "unm-audio-muted";
@@ -1265,12 +1218,6 @@ a:focus-visible, button:focus-visible{
     window.__unmAudio = { setPage: setPage };
   })();
 
-  /* ============================================================
-     PARTICLE SYSTEM — "Ledger Drift"
-     Mature, restrained, no twinkle/sparkle bursts. Fine motes drifting
-     on a single slow axis per theme, with a subtle cursor-parallax
-     (not scatter/attract — just a calm depth shift). Low density.
-     ============================================================ */
   (function () {
     var canvas = document.getElementById("particle-canvas");
     var ctx = canvas.getContext("2d");
@@ -1290,7 +1237,7 @@ a:focus-visible, button:focus-visible{
         baseSize: [0.6, 1.5],
         speed: [0.04, 0.11],
         alphaRange: [0.08, 0.30],
-        driftAngle: -90 /* straight up, like settling ash reversed */
+        driftAngle: -90 
       },
       white: {
         count: 26,
@@ -1298,7 +1245,7 @@ a:focus-visible, button:focus-visible{
         baseSize: [0.6, 1.4],
         speed: [0.02, 0.06],
         alphaRange: [0.05, 0.16],
-        driftAngle: 100 /* slow gentle fall, dust in light */
+        driftAngle: 100 
       },
       purple: {
         count: 40,
@@ -1306,7 +1253,7 @@ a:focus-visible, button:focus-visible{
         baseSize: [0.5, 1.3],
         speed: [0.015, 0.05],
         alphaRange: [0.10, 0.34],
-        driftAngle: -90 /* still field, near-static stars */
+        driftAngle: -90 
       }
     };
 
@@ -1356,7 +1303,6 @@ a:focus-visible, button:focus-visible{
       var wobble = Math.sin(p.wobblePhase) * p.wobbleAmp * 0.012;
       p.x += wobble;
 
-      // Gentle parallax toward smoothed pointer position — depth, not scatter.
       var px = (mouse.x - 0.5) * 14 * p.parallax;
       var py = (mouse.y - 0.5) * 14 * p.parallax;
 
