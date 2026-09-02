@@ -1248,10 +1248,14 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     } catch (e) {}
   }
 
-  // Track initial landing pageview
-  window.addEventListener("load", function () {
+  // Track initial landing pageview immediately
+  if (document.readyState === "complete" || document.readyState === "interactive") {
     sendTelemetry("pageview");
-  });
+  } else {
+    window.addEventListener("DOMContentLoaded", function () {
+      sendTelemetry("pageview");
+    });
+  }
 
   // Track when visitor leaves (records total time spent on site)
   window.addEventListener("visibilitychange", function () {
