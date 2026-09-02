@@ -1015,7 +1015,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
         </div>
         <div class="connect-row">
           <span class="connect-label">Whitelist</span>
-          <span class="connect-value">Reviewed Enrollment</span>
+          <span class="connect-value">Reviewed Enrollment2</span>
         </div>
       </div>
     </div>
@@ -1182,30 +1182,10 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   "use strict";
 
   /* ============================================================
-     SECRET PROTOCOL CONFIGURATION
-     Password: 4321
-     Owner Reset Key: 1234
+     SUPABASE BACKEND CONNECTION
+     (All passwords, IPs, and Secret URLs are safely on Supabase)
      ============================================================ */
-  var SECRET_CONFIG = {
-    // SHA-256 hash of "4321"
-    passwordHash: "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
-    
-    // SHA-256 hash of "1234" (Owner Reset Key)
-    ownerResetHash: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
-
-    // 2nd Release download details (Replace URL when your 2nd release is ready)
-    secretDownloadUrl: "https://github.com/TamimAhmedz/mcjava/releases/download/v2/UNM-Secret-Pack.7z",
-    secretFileName: "UNM-Secret-Pack.7z",
-    secretFileSub: "Classified Pack &middot; ~62.40 MB &middot; Restricted Access",
-    secretNote: "Confidential files. Do not distribute without approval from the Court."
-  };
-
-  async function sha256(str) {
-    var buffer = new TextEncoder().encode(str);
-    var hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-    var hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(function(b) { return b.toString(16).padStart(2, "0"); }).join("");
-  }
+  var SUPABASE_VAULT_URL = "https://innhocwqdehoommmwsay.supabase.co/functions/v1/verify-vault";
 
   /* ============================================================
      Section navigation
@@ -1287,7 +1267,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   });
 
   /* ============================================================
-     Theme switching (persisted across visits via localStorage)
+     Theme switching
      ============================================================ */
   var THEME_STORAGE_KEY = "unm-theme";
   var themeButtons = document.querySelectorAll(".theme-dot");
@@ -1335,9 +1315,8 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   });
 
   /* ============================================================
-     SECRET PACK & LOCKOUT LOGIC
+     SECRET PACK & SUPABASE BACKEND VERIFICATION
      ============================================================ */
-  var ATTEMPTS_KEY = "unm-sec-attempts";
   var secretModal = document.getElementById("secretModal");
   var secretPassInput = document.getElementById("secretPassInput");
   var modalError = document.getElementById("modalError");
@@ -1351,49 +1330,14 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   var downloadBtnText = document.getElementById("downloadBtnText");
   var downloadCard = document.getElementById("downloadCard");
 
+  var currentSecretFileName = "UNM-Essentials-Pack.7z";
   var isSecretUnlocked = false;
-
-  function getAttempts() {
-    try {
-      return parseInt(localStorage.getItem(ATTEMPTS_KEY) || "0", 10);
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  function setAttempts(val) {
-    try {
-      localStorage.setItem(ATTEMPTS_KEY, String(val));
-    } catch (e) {}
-  }
-
-  // Owner reset function
-  window.unmResetDevice = function() {
-    setAttempts(0);
-    modalError.textContent = "";
-    modalError.style.color = "";
-    secretPassInput.value = "";
-    showToast("Device lock reset by Owner Key.");
-    return "Device unlocked.";
-  };
-
-  function updateLockStatusUI() {
-    var attempts = getAttempts();
-    if (attempts >= 3) {
-      modalError.textContent = "Device barred: 3 failed attempts. (Owner key required)";
-      modalError.style.color = "var(--danger)";
-    } else if (attempts > 0) {
-      modalError.textContent = "Attempts remaining: " + (3 - attempts);
-      modalError.style.color = "var(--text-1)";
-    } else {
-      modalError.textContent = "";
-    }
-  }
 
   lockToggle.addEventListener("click", function () {
     secretModal.classList.add("show");
     secretPassInput.value = "";
-    updateLockStatusUI();
+    modalError.textContent = "";
+    modalError.style.color = "";
     setTimeout(function() { secretPassInput.focus(); }, 150);
   });
 
@@ -1411,48 +1355,62 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     var entered = secretPassInput.value.trim();
     if (!entered) return;
 
-    var hash = await sha256(entered);
+    modalError.textContent = "Verifying with server court...";
+    modalError.style.color = "var(--text-1)";
+    secretConfirmBtn.disabled = true;
 
-    // 1. Check if the entered key is the OWNER RESET KEY ("1234")
-    if (hash === SECRET_CONFIG.ownerResetHash) {
-      window.unmResetDevice();
-      return;
-    }
+    try {
+      var response = await fetch(SUPABASE_VAULT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cipher: entered })
+      });
 
-    // 2. If locked out, disallow normal passwords
-    var attempts = getAttempts();
-    if (attempts >= 3) {
-      modalError.textContent = "Device barred: 3 failed attempts. Enter owner key to reset.";
-      modalError.style.color = "var(--danger)";
-      return;
-    }
+      var result = await response.json();
+      secretConfirmBtn.disabled = false;
 
-    // 3. Check if password is correct ("4321")
-    if (hash === SECRET_CONFIG.passwordHash) {
-      isSecretUnlocked = true;
-      lockToggle.classList.add("is-unlocked");
-      secretModal.classList.remove("show");
+      // 1. Owner Reset Key entered
+      if (result.isOwnerReset) {
+        modalError.textContent = result.message;
+        modalError.style.color = "var(--accent)";
+        secretPassInput.value = "";
+        showToast("Device IP lock cleared by Owner.");
+        return;
+      }
 
-      // Replace Essentials Pack with Secret Pack
-      displayFileName.textContent = SECRET_CONFIG.secretFileName;
-      displayFileSub.innerHTML = SECRET_CONFIG.secretFileSub;
-      displayFileNote.textContent = SECRET_CONFIG.secretNote;
-      downloadBtn.setAttribute("href", SECRET_CONFIG.secretDownloadUrl);
-      downloadBtnText.textContent = "Download Secret Pack";
-      downloadCard.classList.add("is-secret-active");
-
-      showToast("Classified Release unlocked. Active for this session.");
-    } else {
-      // Wrong password
-      var current = attempts + 1;
-      setAttempts(current);
-      if (current >= 3) {
-        modalError.textContent = "Device barred: 3 failed attempts. Enter owner key to reset.";
+      // 2. IP is Banned
+      if (result.banned) {
+        modalError.textContent = result.message;
         modalError.style.color = "var(--danger)";
+        return;
+      }
+
+      // 3. Correct Password -> Unlock
+      if (result.success && result.secretData) {
+        isSecretUnlocked = true;
+        currentSecretFileName = result.secretData.fileName;
+        lockToggle.classList.add("is-unlocked");
+        secretModal.classList.remove("show");
+
+        // Swap file details dynamically from backend response
+        displayFileName.textContent = result.secretData.fileName;
+        displayFileSub.innerHTML = result.secretData.fileSub;
+        displayFileNote.textContent = result.secretData.fileNote;
+        downloadBtn.setAttribute("href", result.secretData.downloadUrl);
+        downloadBtnText.textContent = "Download Secret Pack";
+        downloadCard.classList.add("is-secret-active");
+
+        showToast("Classified Release unlocked. Active for this session.");
       } else {
-        modalError.textContent = "Incorrect cipher. " + (3 - current) + " attempt(s) remaining.";
+        // 4. Incorrect Password
+        modalError.textContent = result.message || "Incorrect cipher.";
         modalError.style.color = "var(--danger)";
       }
+
+    } catch (err) {
+      secretConfirmBtn.disabled = false;
+      modalError.textContent = "Connection to server failed. Try again.";
+      modalError.style.color = "var(--danger)";
     }
   }
 
@@ -1478,7 +1436,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   }
 
   downloadBtn.addEventListener("click", function () {
-    var fname = isSecretUnlocked ? SECRET_CONFIG.secretFileName : "UNM-Essentials-Pack.7z";
+    var fname = isSecretUnlocked ? currentSecretFileName : "UNM-Essentials-Pack.7z";
     showToast("Starting download — " + fname);
   });
 
@@ -1598,30 +1556,9 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     var rafId = null;
 
     var THEME_CONFIG = {
-      dark: {
-        count: 34,
-        color: "201,164,92",
-        baseSize: [0.6, 1.5],
-        speed: [0.04, 0.11],
-        alphaRange: [0.08, 0.30],
-        driftAngle: -90
-      },
-      white: {
-        count: 26,
-        color: "91,87,80",
-        baseSize: [0.6, 1.4],
-        speed: [0.02, 0.06],
-        alphaRange: [0.05, 0.16],
-        driftAngle: 100
-      },
-      purple: {
-        count: 40,
-        color: "160,116,232",
-        baseSize: [0.5, 1.3],
-        speed: [0.015, 0.05],
-        alphaRange: [0.10, 0.34],
-        driftAngle: -90
-      }
+      dark: { count: 34, color: "201,164,92", baseSize: [0.6, 1.5], speed: [0.04, 0.11], alphaRange: [0.08, 0.30], driftAngle: -90 },
+      white: { count: 26, color: "91,87,80", baseSize: [0.6, 1.4], speed: [0.02, 0.06], alphaRange: [0.05, 0.16], driftAngle: 100 },
+      purple: { count: 40, color: "160,116,232", baseSize: [0.5, 1.3], speed: [0.015, 0.05], alphaRange: [0.10, 0.34], driftAngle: -90 }
     };
 
     function resize() {
