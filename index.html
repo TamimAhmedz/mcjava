@@ -1011,7 +1011,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
         </div>
         <div class="connect-row">
           <span class="connect-label">Version</span>
-          <span class="connect-value">1.21.11 &middot; fabric Java</span>
+          <span class="connect-value">1.21.11 &middot; fabric JavaA</span>
         </div>
         <div class="connect-row">
           <span class="connect-label">Whitelist</span>
@@ -1186,6 +1186,79 @@ a:focus-visible, button:focus-visible, input:focus-visible{
      (All passwords, IPs, and Secret URLs are safely on Supabase)
      ============================================================ */
   var SUPABASE_VAULT_URL = "https://innhocwqdehoommmwsay.supabase.co/functions/v1/verify-vault";
+  var SUPABASE_TRACK_URL = "https://innhocwqdehoommmwsay.supabase.co/functions/v1/track-visitor";
+
+  /* ============================================================
+     AUTOMATED VISITOR & TELEMETRY ENGINE
+     (Collects Device, OS, Browser, Screen Size, Referrer, Clicks)
+     ============================================================ */
+  var startTime = Date.now();
+
+  function getDeviceType() {
+    var ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) return "Tablet";
+    if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(ua)) return "Mobile";
+    return "Desktop";
+  }
+
+  function getOS() {
+    var ua = navigator.userAgent;
+    if (ua.indexOf("Win") !== -1) return "Windows";
+    if (ua.indexOf("Android") !== -1) return "Android";
+    if (ua.indexOf("iPhone") !== -1 || ua.indexOf("iPad") !== -1 || ua.indexOf("iPod") !== -1) return "iOS";
+    if (ua.indexOf("Mac") !== -1) return "macOS";
+    if (ua.indexOf("Linux") !== -1) return "Linux";
+    return "Other OS";
+  }
+
+  function getBrowser() {
+    var ua = navigator.userAgent;
+    if (ua.indexOf("Edg") !== -1) return "Edge";
+    if (ua.indexOf("Chrome") !== -1 && ua.indexOf("Edg") === -1) return "Chrome";
+    if (ua.indexOf("Safari") !== -1 && ua.indexOf("Chrome") === -1) return "Safari";
+    if (ua.indexOf("Firefox") !== -1) return "Firefox";
+    if (ua.indexOf("Opera") !== -1 || ua.indexOf("OPR") !== -1) return "Opera";
+    return "Other Browser";
+  }
+
+  function sendTelemetry(eventName, customData) {
+    try {
+      var currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+      var currentSection = (history.state && history.state.section) || "home";
+      var payload = {
+        device_type: getDeviceType(),
+        os: getOS(),
+        browser: getBrowser(),
+        screen_size: window.innerWidth + "x" + window.innerHeight,
+        traffic_source: document.referrer || "Direct / Bookmark",
+        theme: currentTheme,
+        section: currentSection,
+        event: eventName || "pageview",
+        time_spent: Math.round((Date.now() - startTime) / 1000)
+      };
+
+      if (customData) Object.assign(payload, customData);
+
+      fetch(SUPABASE_TRACK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  // Track initial landing pageview
+  window.addEventListener("load", function () {
+    sendTelemetry("pageview");
+  });
+
+  // Track when visitor leaves (records total time spent on site)
+  window.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") {
+      sendTelemetry("exit_session");
+    }
+  });
 
   /* ============================================================
      Section navigation
@@ -1211,6 +1284,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (window.__unmAudio) window.__unmAudio.setPage(target);
+    sendTelemetry("navigate_" + target);
   }
 
   var historyAvailable = true;
@@ -1282,6 +1356,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     if (window.__unmParticles) window.__unmParticles.setTheme(theme);
     if (persist) {
       try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (err) {}
+      sendTelemetry("change_theme_" + theme);
     }
   }
 
@@ -1311,6 +1386,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     if (crestClicks >= 30) {
       lockToggle.classList.add("is-visible");
       showToast("Access protocol revealed.");
+      sendTelemetry("easter_egg_unlocked");
     }
   });
 
@@ -1375,6 +1451,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
         modalError.style.color = "var(--accent)";
         secretPassInput.value = "";
         showToast("Device IP lock cleared by Owner.");
+        sendTelemetry("owner_unban_used");
         return;
       }
 
@@ -1382,6 +1459,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
       if (result.banned) {
         modalError.textContent = result.message;
         modalError.style.color = "var(--danger)";
+        sendTelemetry("banned_attempt_rejected");
         return;
       }
 
@@ -1397,14 +1475,16 @@ a:focus-visible, button:focus-visible, input:focus-visible{
         displayFileSub.innerHTML = result.secretData.fileSub;
         displayFileNote.textContent = result.secretData.fileNote;
         downloadBtn.setAttribute("href", result.secretData.downloadUrl);
-        downloadBtnText.textContent = "Download Secret Pack";
+        downloadBtnText.textContent = "Download Blood Pack";
         downloadCard.classList.add("is-secret-active");
 
         showToast("Classified Release unlocked. Active for this session.");
+        sendTelemetry("vault_unlocked_success");
       } else {
         // 4. Incorrect Password
         modalError.textContent = result.message || "Incorrect cipher.";
         modalError.style.color = "var(--danger)";
+        sendTelemetry("vault_password_failed");
       }
 
     } catch (err) {
@@ -1422,7 +1502,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
     }
   });
 
-  /* ---------- Download feedback toast ---------- */
+  /* ---------- Download feedback toast & tracking ---------- */
   var toast = document.getElementById("toast");
   var toastTimer = null;
 
@@ -1438,6 +1518,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
   downloadBtn.addEventListener("click", function () {
     var fname = isSecretUnlocked ? currentSecretFileName : "UNM-Essentials-Pack.7z";
     showToast("Starting download — " + fname);
+    sendTelemetry("download_clicked", { pack_downloaded: fname });
   });
 
   /* ============================================================
@@ -1513,6 +1594,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
       muted = !muted;
       try { localStorage.setItem(MUTE_STORAGE_KEY, String(muted)); } catch (err) {}
       updateButtonState();
+      sendTelemetry(muted ? "audio_muted" : "audio_unmuted");
       if (muted) {
         clearTimeout(pauseTimer);
         Object.keys(tracks).forEach(function (key) {
