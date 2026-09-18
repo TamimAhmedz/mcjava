@@ -127,21 +127,37 @@ body{
   transition: background 0.5s var(--ease);
 }
 
+/* Desktop Backdrops */
 [data-theme="dark"] #bg-backdrop{
   background-image: 
     linear-gradient(rgba(10, 12, 15, 0.72), rgba(10, 12, 15, 0.82)),
-    url("https://c3.ai/api/media/file/SE-HeaderImage-1920x850-1.jpg");
+    url("https://tamimahmedz.github.io/mcjava/GG/s.jpg");
 }
 
 [data-theme="white"] #bg-backdrop{
   background-image: 
     linear-gradient(rgba(247, 244, 237, 0.65), rgba(247, 244, 237, 0.72)),
-    url("https://cdn.dribbble.com/userupload/13036523/file/original-5f714f06f4adb5a8b63a31436c29ee82.jpg?resize=2400x1800&vertical=center");
+    url("https://tamimahmedz.github.io/mcjava/GG/d.webp");
 }
 
 [data-theme="purple"] #bg-backdrop{
   background-image: none;
   background-color: var(--bg-0);
+}
+
+/* Mobile & Small Devices Backdrop Override */
+@media (max-width: 768px){
+  [data-theme="dark"] #bg-backdrop{
+    background-image: 
+      linear-gradient(rgba(10, 12, 15, 0.72), rgba(10, 12, 15, 0.82)),
+      url("https://tamimahmedz.github.io/mcjava/GG/sp.jpg");
+  }
+
+  [data-theme="white"] #bg-backdrop{
+    background-image: 
+      linear-gradient(rgba(247, 244, 237, 0.65), rgba(247, 244, 237, 0.72)),
+      url("https://tamimahmedz.github.io/mcjava/GG/dp.webp");
+  }
 }
 
 #particle-canvas{
@@ -1914,7 +1930,7 @@ a:focus-visible, button:focus-visible, input:focus-visible{
       var newH = window.innerHeight;
 
       var widthChanged = Math.abs(newW - lastW) > 5;
-      var largeHeightChange = Math.abs(newH - lastH) > 150; // filters out 50-90px mobile address bar toggle
+      var largeHeightChange = Math.abs(newH - lastH) > 150;
 
       if (widthChanged || largeHeightChange) {
         lastW = newW;
@@ -1922,7 +1938,6 @@ a:focus-visible, button:focus-visible, input:focus-visible{
         resize();
         buildForTheme();
       } else if (newH !== lastH) {
-        // Minor URL bar height wobble: update wrap boundary without wiping particles
         lastH = newH;
         H = newH;
       }
